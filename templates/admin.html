@@ -1,0 +1,11 @@
+<h2>Admin Panel</h2>
+
+<h3>Users</h3>
+{% for u in users %}
+{{u[0]}}<br>
+{% endfor %}
+
+<h3>Chats</h3>
+{% for c in chats %}
+User {{c[1]}} : {{c[2]}} → {{c[3]}}<br>
+{% endfor %}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.chatbtn{position:fixed;bottom:20px;right:20px;padding:15px;border-radius:50%;background:#007bff;color:white;border:none;}
+.chatbox{position:fixed;bottom:80px;right:20px;width:300px;background:white;border:1px solid gray;display:none;flex-direction:column;}
+.msg{height:250px;overflow:auto;padding:10px;}
+</style>
+</head>
+
+<body>
+
+<h3>Welcome {{username}}</h3>
+<a href="/logout">Logout</a>
+
+<p>Account: {{details[0]}}</p>
+<p>IFSC: {{details[1]}}</p>
+<p>Balance: ₹{{details[2]}}</p>
+
+
+<button class="chatbtn" onclick="toggle()">💬</button>
+
+<div class="chatbox" id="box">
+
+<div class="msg" id="msgs">
+
+{% for m,r in chats %}
+<div><b>You:</b> {{m}}</div>
+<div><b>Bot:</b> {{r}}</div><hr>
+{% endfor %}
+
+</div>
+
+<input id="text">
+<button onclick="send()">Send</button>
+<button onclick="voice()">🎤</button>
+
+</div>
+
+
+<script>
+function toggle(){
+ let b=document.getElementById("box");
+ b.style.display=b.style.display=="flex"?"none":"flex";
+}
+
+function send(){
+ let t=document.getElementById("text").value;
+ let area=document.getElementById("msgs");
+
+ area.innerHTML+="<i>Bot typing...</i><br>";
+
+ fetch("/chat",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({message:t})
+ })
+ .then(r=>r.json())
+ .then(d=>{
+   area.innerHTML+="<b>You:</b>"+t+"<br>";
+   area.innerHTML+="<b>Bot:</b>"+d.reply+"<hr>";
+   area.scrollTop=area.scrollHeight;
+ });
+}
+
+function voice(){
+ let rec=new webkitSpeechRecognition();
+ rec.onresult=e=>{
+   document.getElementById("text").value=e.results[0][0].transcript;
+ };
+ rec.start();
+}
+</script>
+
+</body>
+</html>
